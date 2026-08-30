@@ -1,153 +1,242 @@
-# 🛠️ Scripts & Configurações
+# 📚 Academic Resources
 
-Repositório com uma coleção de **scripts, configurações, laboratórios e materiais de apoio** desenvolvidos durante meus estudos em Tecnologia da Informação.
+Coleção pessoal de **materiais, scripts, configurações, guias e referências** desenvolvidos ou utilizados durante meus estudos em Tecnologia da Informação.
 
-A ideia é reunir ferramentas que utilizo no dia a dia, experimentos realizados em laboratórios e exemplos que possam ser úteis para **outros estudantes e acadêmicos** que estejam estudando Linux, redes, programação e segurança da informação.
+Este repositório funciona como um espaço para organizar conhecimentos adquiridos durante estudos, projetos e laboratórios, além de disponibilizar materiais que podem ser úteis para **outros estudantes e acadêmicos**.
 
-> 🎓 **Foco:** aprendizado, experimentação e compartilhamento de conhecimento.
-
----
-
-## 📌 Sobre o projeto
-
-Este repositório funciona como uma espécie de **caixa de ferramentas pessoal**.
-
-Aqui são armazenados scripts que desenvolvi para automatizar tarefas, configurações utilizadas em laboratórios e exemplos que podem servir como referência para outros projetos.
-
-Os conteúdos podem variar desde scripts simples em Bash até configurações de servidores e redes.
-
-### Entre os conteúdos:
-
-* 🐧 Administração Linux
-* 🌐 Redes de computadores
-* 🔥 Firewall e `iptables`
-* 🖥️ Configuração de servidores
-* 🌎 Apache / Nginx
-* 🔐 Segurança da informação
-* 📜 Scripts Bash
-* ⚙️ Automação
-* 🧪 Laboratórios e experimentos
-* 📚 Materiais para estudo
+Os conteúdos aqui não seguem necessariamente um único formato: alguns diretórios podem conter apenas documentação, enquanto outros podem incluir scripts, configurações, exemplos práticos ou todos eles.
 
 ---
 
-# 🧰 Ferramentas e projetos relacionados
+## 🎯 Objetivo
 
-Alguns projetos open source e ferramentas que considero interessantes para estudos.
+A ideia deste repositório é simples:
 
-## 🌐 Redes
+> **Estudar → Praticar → Documentar → Compartilhar**
 
-* **Wireshark** — análise de tráfego de rede.
-* **Nmap** — descoberta de hosts, serviços e auditoria de redes.
-* **GNS3** — emulação e laboratório de redes.
-* **EVE-NG** — plataforma para criação de laboratórios de redes.
-* **Cisco Packet Tracer** — simulador de redes.
+Aqui pretendo reunir materiais que normalmente ficariam espalhados entre arquivos locais, anotações e diferentes projetos.
 
-## 🐧 Linux
-
-* **Debian** — sistema operacional utilizado em diversos laboratórios.
-* **Ubuntu Server** — distribuição voltada para servidores.
-* **Void Linux** — distribuição Linux utilizada para estudos e uso pessoal.
-
-## 🔥 Firewall
-
-* **iptables** — firewall tradicional do Linux.
-* **nftables** — framework moderno de filtragem de pacotes no Linux.
-
-## 🌎 Servidores Web
-
-* **Apache HTTP Server**
-* **Nginx**
-
-## 🔐 Segurança
-
-* **OWASP** — referência para segurança de aplicações Web.
-* **OWASP Juice Shop** — aplicação propositalmente vulnerável para treinamento.
-* **Metasploit Framework** — framework para testes de segurança.
-* **Burp Suite** — plataforma para testes de aplicações Web.
+O repositório também serve como um histórico dos assuntos estudados e dos experimentos realizados ao longo da minha formação.
 
 ---
 
-# 📚 Referências para estudo
+# 📂 Organização
 
-Algumas fontes que podem ser úteis para quem está estudando os assuntos abordados neste repositório.
+Cada diretório representa um assunto, ferramenta, laboratório ou conjunto de materiais.
 
-### Linux
-
-* [Linux man-pages](https://man7.org/linux/man-pages)
-* [The Linux Kernel Documentation](https://docs.kernel.org)
-* [Debian Documentation](https://www.debian.org/doc)
-
-### Redes
-
-* [Cisco Networking Academy](https://www.netacad.com)
-* [GNS3](https://www.gns3.com)
-* [Wireshark](https://www.wireshark.org)
-* [Nmap](https://nmap.org)
-
-### Segurança da Informação
-
-* [OWASP](https://owasp.org)
-* [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide)
-* [OWASP Juice Shop](https://owasp.org/www-project-juice-shop)
-* [PortSwigger Web Security Academy](https://portswigger.net/web-security?utm_source=chatgpt.com)
-
----
-
-# 🧪 Laboratórios
-
-Uma das finalidades deste repositório é facilitar a criação de ambientes para **experimentação prática**.
-
-Algumas plataformas interessantes para complementar os estudos:
-
-* [TryHackMe](https://tryhackme.com)
-* [Hack The Box](https://www.hackthebox.com)
-* [OverTheWire](https://overthewire.org)
-* [VulnHub](https://www.vulnhub.com)
-
-> Utilize ambientes controlados e autorizados para realizar testes de segurança.
-
----
-
-# 🎯 Objetivo
-
-O objetivo não é simplesmente disponibilizar scripts prontos.
-
-A proposta é **documentar o processo de aprendizado**:
+Uma pasta pode conter:
 
 ```text
-Estudo
-   ↓
-Experimentação
-   ↓
-Laboratório
-   ↓
-Script
-   ↓
-Documentação
-   ↓
-Compartilhamento
+README.md
+scripts/
+configs/
+examples/
 ```
 
-Dessa forma, o repositório também serve como um histórico dos conhecimentos e experiências adquiridos ao longo dos estudos.
+ou apenas:
+
+```text
+README.md
+```
+
+Não existe a obrigação de todos os diretórios seguirem exatamente a mesma estrutura.
+
+### Exemplo
+
+```text
+.
+├── README.md
+│
+├── configs-redes/
+│   └── basico-dmz
+│       ├── README.md
+│       └── scripts/
+│           ├── gateway.sh
+│           └── webserver.sh
+│
+├── linux/
+│   └── README.md
+│
+├── cybersecurity/
+│   ├── README.md
+│   └── scripts/
+│
+└── ...
+```
 
 ---
 
-# 🤝 Para outros acadêmicos
+# 📖 Conteúdos
 
-Se algum script ou configuração deste repositório for útil para seus estudos, fique à vontade para utilizá-lo como **referência**.
+O repositório pode conter materiais relacionados a diferentes áreas da Tecnologia da Informação.
 
-Entretanto, recomendo sempre entender o funcionamento do código antes de executá-lo ou utilizá-lo em outro ambiente.
+### 🌐 Redes
 
-A ideia é que este repositório possa ser útil não somente para mim, mas também para outras pessoas que estejam começando a estudar essas áreas.
+* Configuração de redes;
+* Endereçamento IPv4;
+* Roteamento;
+* Firewall;
+* NAT;
+* DMZ;
+* Servidores;
+* Ferramentas de análise de rede;
+* Laboratórios de redes.
+
+### 🐧 Linux
+
+* Administração de sistemas;
+* Shell Script;
+* Gerenciamento de serviços;
+* Configuração de servidores;
+* Automação;
+* Ferramentas de terminal.
+
+### 🔐 Segurança da Informação
+
+* Conceitos de segurança;
+* Pentest;
+* Web Security;
+* Análise de vulnerabilidades;
+* Laboratórios;
+* Ferramentas;
+* Metodologias e referências.
+
+### 💻 Programação
+
+* Scripts;
+* Exemplos de código;
+* Automação;
+* Experimentos;
+* Pequenos projetos.
+
+### 🧪 Laboratórios
+
+Também podem ser adicionados laboratórios utilizados para estudar determinados conceitos na prática.
+
+---
+
+# 🛠️ Scripts
+
+Alguns materiais possuem scripts desenvolvidos especificamente para automatizar configurações ou tarefas.
+
+Por exemplo:
+
+```text
+configs-redes/scripts/gateway.sh
+```
+
+e:
+
+```text
+configs-redes/scripts/webserver.sh
+```
+
+Os scripts são acompanhados, quando necessário, por documentação explicando seu funcionamento e utilização.
+
+> ⚠️ Os scripts podem ter sido desenvolvidos para um ambiente específico. Sempre revise o código antes de executá-lo em outro sistema.
+
+---
+
+# 📚 Guias e Documentação
+
+Nem todo material deste repositório possui código.
+
+Alguns diretórios podem conter somente documentação, como:
+
+```text
+linux/
+└── README.md
+```
+
+ou:
+
+```text
+redes/
+└── README.md
+```
+
+Esses arquivos podem funcionar como:
+
+* Guias de estudo;
+* Anotações;
+* Tutoriais;
+* Resumos;
+* Referências rápidas;
+* Documentação de laboratórios;
+* Material de apoio acadêmico.
+
+---
+
+# 🌎 Projetos e ferramentas recomendados
+
+Alguns projetos e ferramentas open source que podem complementar os estudos.
+
+## Redes
+
+* [Wireshark](https://www.wireshark.org/)
+* [Nmap](https://nmap.org/)
+* [GNS3](https://www.gns3.com/)
+* [EVE-NG](https://www.eve-ng.net/)
+
+## Segurança
+
+* [OWASP](https://owasp.org/)
+* [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/)
+* [PortSwigger Web Security Academy](https://portswigger.net/web-security)
+* [Metasploit](https://www.metasploit.com/)
+
+## Linux
+
+* [Debian](https://www.debian.org/)
+* [Ubuntu](https://ubuntu.com/)
+* [Linux Kernel Documentation](https://docs.kernel.org/)
+* [Linux man-pages](https://man7.org/linux/man-pages/)
+
+---
+
+# 🧪 Plataformas para praticar
+
+Para quem quiser transformar os conceitos estudados em prática:
+
+* [TryHackMe](https://tryhackme.com/)
+* [Hack The Box](https://www.hackthebox.com/)
+* [OverTheWire](https://overthewire.org/)
+* [VulnHub](https://www.vulnhub.com/)
+
+> Utilize ferramentas e ambientes de segurança somente em sistemas próprios, laboratórios ou ambientes onde você tenha autorização para realizar testes.
+
+---
+
+# 🎓 Para estudantes
+
+Este repositório também tem como objetivo servir como material de apoio para outros acadêmicos.
+
+Os conteúdos podem ser utilizados para:
+
+* Estudo;
+* Consulta;
+* Criação de laboratórios;
+* Aprendizado de ferramentas;
+* Referência para trabalhos práticos;
+* Experimentação em ambientes controlados.
+
+A recomendação é sempre **entender o conteúdo antes de simplesmente copiar e executar**.
 
 ---
 
 # 🚧 Status
 
-Este repositório está em **desenvolvimento contínuo**.
+Este repositório está em constante desenvolvimento.
 
-Novos scripts, configurações, laboratórios e referências serão adicionados conforme novos assuntos forem estudados.
+Novos conteúdos podem ser adicionados a qualquer momento, incluindo:
+
+* 📖 Novos guias;
+* 🧪 Novos laboratórios;
+* ⚙️ Novos scripts;
+* 📝 Anotações;
+* 🔧 Configurações;
+* 🔗 Novas referências;
+* 💻 Projetos e experimentos.
 
 ---
 
@@ -155,24 +244,24 @@ Novos scripts, configurações, laboratórios e referências serão adicionados 
 
 **Paulo Cezar Santos**
 
-Estudante e entusiasta de:
+Interesses:
 
-* Redes de computadores
-* Linux
-* Segurança da Informação
-* Pentest
-* Programação
-* Reverse Engineering
-* Administração de sistemas
+* Redes de computadores;
+* Linux;
+* Segurança da Informação;
+* Pentest;
+* Programação;
+* Reverse Engineering;
+* Administração de sistemas.
 
 ---
 
 ## ⭐ Contribuições
 
-Sugestões de melhorias, correções e referências são bem-vindas.
+Sugestões, correções e novas referências são bem-vindas.
 
-Se você encontrou algum problema ou possui uma sugestão interessante para este projeto, abra uma **Issue** ou envie um **Pull Request**.
+Caso encontre algum problema ou tenha uma sugestão para melhorar um material, você pode abrir uma **Issue** ou enviar um **Pull Request**.
 
 ---
 
-> **"Aprender fazendo, documentar para não esquecer e compartilhar para que outros possam aprender."**
+> **Estudar, experimentar, documentar e compartilhar.**
