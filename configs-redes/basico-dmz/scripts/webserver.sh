@@ -34,6 +34,10 @@ tools=(
     apache2
 )
 
+# Interfaces | Altere as partes a seguir conforme sua necessidade
+main_int="enp8s0"
+list_interfaces=()
+
 # Check os
 os=$(lsb_release -a | grep "Distributor ID:" | cut -d ":" -f2 | tr -d '\t')  # Sistemas baseados em GNU/Linux
 #os_bsd=$(cat /etc/os-release | cut -d "=" -f2 | tr '\n' ' '| cut -d " " -f1) # Sistemas baseados em BSD
@@ -252,8 +256,8 @@ if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
     iface lo inet loopbackp
 
     # DMZ
-    auto enp8s0
-    iface enp8s0 inet static
+    auto ${main_int}
+    iface ${main_int} inet static
         address 10.1.1.1/24
 
 CONFIG
@@ -261,9 +265,17 @@ CONFIG
 
     # Ativando as configurações
     echo -e "${BLUE}[+]${WHITE}Ativando as configurações!${RESET}"
-    ifdown enp8s0
+    ifdown ${main_int}
 
-    ifup enp8s0
+    # for list in "${list_interfaces[@]}";do 
+    #     ifdown "${int}"
+    # done
+
+    ifup ${main_int}
+
+    # for list in "${list_interfaces[@]}";do 
+    #     ifup "${int}"
+    # done
 fi
 
 # Configuração das regras de firewall
@@ -272,8 +284,11 @@ fi
 echo -e "${BLUE}[+]${WHITE}Configurando as regras de firwall!${RESET}"
 if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
 
-    iptables -A FORWARD -i enp8s0 -o enp8s0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-    iptables -A FORWARD -i enp8s0 -o enp9s0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A FORWARD -i "${main_int}" -o "${main_int}" -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+    # for int in "${list_interfaces[@]}";do
+    #     iptables -A FORWARD -i "${main_int}" -o "${int}" -m state --state RELATED,ESTABLISHED -j ACCEPT
+    # done
 
     echo -e "${BLUE}[+]${WHITE}Salvando as regras de firewall!${RESET}"
     netfilter-persistent save

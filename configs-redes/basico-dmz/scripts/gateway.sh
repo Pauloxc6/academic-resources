@@ -33,6 +33,13 @@ tools=(
     netfilter-persistent
 )
 
+# Interfaces | Altere as partes a seguir conforme sua necessidade
+main_int="enp3s0"
+list_interfaces=(
+    enp8s0
+    enp9s0
+)
+
 # Check os
 os=$(lsb_release -a | grep "Distributor ID:" | cut -d ":" -f2 | tr -d '\t')  # Sistemas baseados em GNU/Linux
 #os_bsd=$(cat /etc/os-release | cut -d "=" -f2 | tr '\n' ' '| cut -d " " -f1) # Sistemas baseados em BSD
@@ -166,7 +173,7 @@ if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
 
     # Board
     allow-hotplug enp3s0
-    iface enp3s0 inet dhcp
+    iface ${main_int} inet dhcp
 
     # DMZ
     auto enp8s0
@@ -182,13 +189,17 @@ CONFIG
 
     # Ativando as configurações
     echo -e "${BLUE}[+]${WHITE}Ativando as configurações!${RESET}"
-    ifdown enp3s0
-    ifdown enp8s0
-    ifdown enp9s0
+    ifdown ${main_int}
+    
+    for int in "${list_interfaces[@]}"; do
+        ifdown "${int}"
+    done
 
-    ifup enp3s0
-    ifup enp8s0
-    ifup enp9s0
+    ifup ${main_int}
+
+    for int in "${list_interfaces[@]}"; do
+        ifup "${int}"
+    done
 fi
 
 # Configuração das regras de firewall
@@ -197,13 +208,15 @@ fi
 echo -e "${BLUE}[+]${WHITE}Configurando as regras de firwall!${RESET}"
 if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
 
-    iptables -t nat -A POSTROUTING -o enp3s0 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o "${main_int}" -j MASQUERADE
 
-    iptables -A FORWARD -i enp8s0 -o enp3s0 -j ACCEPT
-    iptables -A FORWARD -i enp9s0 -o enp3s0 -j ACCEPT
+    for int in "${list_interfaces[@]}"; do
+        iptables -A FORWARD -i "${int}" -o ${main_int} -j ACCEPT
+    done
 
-    iptables -A FORWARD -i enp3s0 -o enp8s0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-    iptables -A FORWARD -i enp3s0 -o enp9s0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    for int in "${list_interfaces[@]}"; do
+        iptables -A FORWARD -i "${main_int}" -o "${int}" -m state --state RELATED,ESTABLISHED -j ACCEPT
+    done
 
     iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.1.1.4:80
     iptables -A FORWARD -p tcp -d 10.1.1.4 --dport 80 -j ACCEPT
