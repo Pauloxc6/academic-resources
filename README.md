@@ -64,6 +64,8 @@ Não existe a obrigação de todos os diretórios seguirem exatamente a mesma es
 └── ...
 ```
 
+> **Nota:** para uma melhor visualização dos arquivos em markdown utilize o software [Obsidian.md](https://obsidian.md). Clone o repositório e abra com o obsidian.
+
 ---
 
 # 📖 Conteúdos
