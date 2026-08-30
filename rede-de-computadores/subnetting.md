@@ -45,8 +45,6 @@
 
 # Entendendo CIDR, Máscaras e Sub-redes
 
-Aqui está o seu texto explicativo e diagramas organizados em Markdown, mantendo a sua estrutura didática, comparações em binário e visualizações de rede:
-
 ## 1. O que é CIDR e Notação CIDR?
 
 **CIDR** é a sigla para **Classless Inter-Domain Routing** (_Roteamento Interdomínios sem Classe_).
@@ -92,8 +90,6 @@ O uso de sub-redes cumpre dois papéis fundamentais na arquitetura de redes:
 
 ---
 # RFC 1918: Endereços Privados, Públicos e NAT
-
-Aqui está a sua anotação e esquema visual organizados e formatados em Markdown, mantendo exatamente a sua estrutura de raciocínio, mapas conceituais e definições:
 
 ## 1. Mapeamento e Topologia de Rede
 
@@ -147,8 +143,6 @@ $$\text{IANA} \longrightarrow \text{LACNIC} \longrightarrow \text{Registro.br} \
 
 ---
 # Classes de IP, Máscaras e Tipos de Envio
-
-Aqui está o seu resumo organizado e formatado em Markdown, preservando a sua estrutura de raciocínio, desmistificação e esquemas visuais:
 
 ## 1. O Erro Comum: IP vs. Máscara de Sub-rede
 
