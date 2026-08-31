@@ -1,0 +1,98 @@
+# 🛡️ Linux Security & SOC - Playbook
+
+**Tags:** #estudos #soc #linux #blueteam #hardening
+**Data:** 2025-11-21
+
+---
+### 🚫 Regra Zero: O que NÃO fazer
+
+1. **NÃO REINICIE:** Você perde a RAM e o estado do ataque.
+    
+2. **NÃO LOGUE COMO ROOT (se possível):** Evite alterar o `lastlog` ou timestamps de arquivos administrativos. Use uma conta de serviço ou `sudo`.
+    
+3. **NÃO INSTALE FERRAMENTAS:** Não rode `apt install nmap` agora. Você vai sobrescrever setores do disco que podem conter arquivos deletados pelo atacante (evidência). Use o que já tem instalado.
+
+---
+
+### ⏱️ Minutos 0-5: Contenção (Estancar o Sangramento)
+
+O objetivo é impedir que o atacante roube mais dados ou se mova para outro servidor (Lateral Movement), mas manter a sua conexão para investigar.
+
+1. **Isolamento de Rede (Preferencial):**
+    
+    - Se for Máquina Virtual (VMware/AWS/Azure): Use o painel de controlo da nuvem para aplicar um "Security Group" que bloqueie TUDO (Inbound/Outbound), exceto o seu IP de gestão (SSH).
+        
+    - Se for Físico: É mais arriscado. Se você bloquear o firewall errado, perde o acesso.
+        
+2. **Pausar a VM (Snapshot):**
+    
+    - Se for virtual, tire um **Snapshot da Memória e Disco** imediatamente. Isso congela o estado do crime. Se você errar algo depois, pode voltar a este ponto.
+
+---
+
+### ⏱️ Minutos 5-15: Coleta de Dados Voláteis (Live Forensics)
+
+Você deve seguir a **Ordem de Volatilidade** (RFC 3227). Colete do mais volátil (some rápido) para o menos volátil.
+
+**Dica Ninja:** Não salve a saída dos comandos no disco local (ex: `> log.txt`). Isso altera o disco.
+
+- _Ideal:_ Envie via rede (netcat) para um servidor de logs.
+    
+- _Aceitável:_ Salve num pendrive montado.
+    
+- _Comum:_ Salve na partição `/dev/shm` (Shared Memory). É uma partição que roda na RAM, não toca no disco físico.
+    
+
+**O Script Mental de Coleta:**
+
+1. **Contexto do Sistema (Quem sou eu? Que horas são?)**
+
+```Bash
+date > /dev/shm/evidencia_01.txt
+uptime >> /dev/shm/evidencia_01.txt
+uname -a >> /dev/shm/evidencia_01.txt
+```
+
+2.  **Conexões de Rede (Quem está conectado AGORA?)** _Alta Volatilidade_
+
+- Se o atacante perceber que você entrou, ele fecha a conexão. Pegue isso primeiro.
+
+```bash
+netstat -antp >> /dev/shm/evidencia_net.txt
+# ou
+ss -antp >> /dev/shm/evidencia_net.txt
+```
+
+- _Opcional:_ Se tiver `arp`, capture a tabela ARP para ver se há _Spoofing_ na rede local: `arp -a >> /dev/shm/evidencia_arp.txt`
+
+3. Processos (O que está a rodar?):
+
+```bash
+ps aux >> /dev/shm/evidencia_proc.txt
+```
+
+4. **Arquivos Abertos (O que o processo está a mexer?)**
+
+- Isso liga o processo malicioso ao arquivo escondido que ele está a ler ou apagar.
+```bash
+lsof -n >> /dev/shm/evidencia_lsof.txt
+```
+
+5. Usuários Logados
+
+```bash
+w >> /dev/shm/evidencia_users.txt
+last >> /dev/shm/evidencia_last.txt
+```
+
+### ⏱️ Pós-15 Minutos: Análise e Decisão
+
+Agora que você salvou o estado volátil, você pode respirar e analisar o que coletou.
+
+**Cenário de Decisão (Triage):** Você olha o `evidencia_net.txt` e vê uma conexão para um IP desconhecido. Você olha o `evidencia_proc.txt` e vê que o PID dessa conexão é o `./kworker`, rodando a partir de `/tmp`.
+
+**Veredito:** Compromisso Confirmado. **Próxima Ação:**
+
+1. Se a máquina é "descartável" (Web Server stateless): Mate a máquina, suba uma nova limpa (patchada) e analise a imagem morta depois (Post-Mortem Forensics).
+    
+2. Se a máquina é "crítica" (Banco de Dados Legacy): Você terá que tentar remover o malware cirurgicamente (muito arriscado) ou migrar os dados para um servidor limpo.
