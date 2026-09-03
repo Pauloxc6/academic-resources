@@ -1,4 +1,4 @@
-P# ==========================================
+# ==========================================
 # Editors / IDEs
 # ==========================================
 
@@ -122,3 +122,9 @@ output/
 # Ignore only local Obsidian workspace settings
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
+
+#===========================================
+# Outros
+#===========================================
+
+tools-test
