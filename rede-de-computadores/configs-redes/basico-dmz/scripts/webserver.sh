@@ -1,5 +1,4 @@
 #!/usr/bin//env bash
-
 #=======================================
 # Banner
 #=======================================
@@ -14,7 +13,6 @@ __        __   _    ____
 By: @Pauloxc6
 EOF
 
-
 #=======================================
 # Vars
 #=======================================
@@ -24,7 +22,7 @@ set -euo pipefail
 
 # * Otimização
 export LANG=C
-export LC_ALL
+export LC_ALL=C
 
 # Arrays com ferramentas necessarias
 tools=(
@@ -46,6 +44,7 @@ os=$(lsb_release -a | grep "Distributor ID:" | cut -d ":" -f2 | tr -d '\t')  # S
 debug=0
 security=0
 
+# Arquivos de configuração
 interfaces_config="/etc/network/interfaces" 
 apache_config="/etc/apache2/apache2.conf"
 secuirty_config="/etc/apache2/conf-available/security.conf"
@@ -181,7 +180,9 @@ CONFIG
 
         echo -e "${GREEN}[+] Configuração do Apache válida!${RESET}"
 
-        systemctl restart apache2
+        case "${os,,}" in
+            "debian"|"ubuntu") systemctl restart apache2 ;;
+        esac
 
         echo -e "${GREEN}[+] Apache reiniciado com sucesso!${RESET}"
 
@@ -193,8 +194,6 @@ CONFIG
     fi
 
 }
-
-
 
 #=======================================
 # Parser
@@ -250,39 +249,64 @@ esac
 echo -e "${BLUE}[+]${WHITE}Iniciando as configurações de rede!${RESET}"
 if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
     if [ -e "${interfaces_config}" ]; then
-        cat <<CONFIG > "${interfaces_config}"
-    # Loopback
-    auto lo
-    iface lo inet loopbackp
 
-    # DMZ
-    auto ${main_int}
-    iface ${main_int} inet static
-        address 10.1.1.1/24
+        echo -e "${BLUE}[+]${WHITE}Fazendo a limpeza das antigas configurações de rede!${RESET}"
+        ip addr flush dev "${main_int}"
+        ip route flush dev "${main_int}"
+
+        for int in "${list_interfaces[@]}";do
+            ip addr flush dev "${int}"
+            ip route flush dev "${int}"
+        done
+
+        cat <<CONFIG > "${interfaces_config}"
+# Loopback
+auto lo
+iface lo inet loopback
+
+# DMZ
+auto ${main_int}
+iface ${main_int} inet static
+    address 10.1.1.4/24
+    gateway 10.1.1.1
 
 CONFIG
     fi
 
     # Ativando as configurações
     echo -e "${BLUE}[+]${WHITE}Ativando as configurações!${RESET}"
-    ifdown ${main_int}
+    ifdown "${main_int}"
 
     # for list in "${list_interfaces[@]}";do 
     #     ifdown "${int}"
     # done
 
-    ifup ${main_int}
+    ifup "${main_int}"
 
     # for list in "${list_interfaces[@]}";do 
     #     ifup "${int}"
     # done
+
+    # Ativando a reinicialização
+    echo -e "${BLUE}[+]${WHITE}Iniciando a reinicialização!${RESET}"
+    case "${os,,}" in
+        "debian"|"ubuntu") systemctl restart networking ;;
+    esac
+
 fi
 
 # Configuração das regras de firewall
 # Altere conforme for necessário
 
 echo -e "${BLUE}[+]${WHITE}Configurando as regras de firwall!${RESET}"
-if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
+if [[ "${os,,}" == "debian" || "${os,,}" == "ubuntu" ]]; then
+
+    echo -e "${BLUE}[+]${WHITE}Limpando as regras de firwall!${RESET}"
+    read -rp "Autorizar a limpeza das antigas regras de firewall [s/n]" sn
+    if [[ "${sn,,}" == "s" ]]; then
+        iptables -F
+        iptables -t nat -F
+    fi
 
     iptables -A FORWARD -i "${main_int}" -o "${main_int}" -m state --state RELATED,ESTABLISHED -j ACCEPT
 
@@ -291,7 +315,7 @@ if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
     # done
 
     echo -e "${BLUE}[+]${WHITE}Salvando as regras de firewall!${RESET}"
-    netfilter-persistent save
+    iptables-save > /etc/iptables/rules.v4
 
 fi
 

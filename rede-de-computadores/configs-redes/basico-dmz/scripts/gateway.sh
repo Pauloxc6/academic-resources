@@ -1,5 +1,4 @@
 #!/usr/bin//env bash
-
 #=======================================
 # Banner
 #=======================================
@@ -14,7 +13,6 @@ cat <<EOF
 By: @Pauloxc6
 EOF
 
-
 #=======================================
 # Vars
 #=======================================
@@ -24,7 +22,7 @@ set -euo pipefail
 
 # * Otimização
 export LANG=C
-export LC_ALL
+export LC_ALL=C
 
 # Arrays com ferramentas necessarias
 tools=(
@@ -47,6 +45,8 @@ os=$(lsb_release -a | grep "Distributor ID:" | cut -d ":" -f2 | tr -d '\t')  # S
 # Básico
 debug=0
 interfaces_config="/etc/network/interfaces" 
+rule4_iptables="/etc/iptables/rules.v4"
+rule6_iptables="/etc/iptables/rules.v6"
 
 # Cores
 export RESET=$'\e[0m'
@@ -57,6 +57,11 @@ export BLUE=$'\e[34;1m'
 export PURPLE=$'\e[35;1m'
 export CYAN=$'\e[36;1m'
 export WHITE=$'\e[37;1m'
+
+# Servidores
+ip_server1="10.1.1.4"
+
+service_port1="80"
 
 #=======================================
 # Checagem Root
@@ -166,24 +171,35 @@ esac
 echo -e "${BLUE}[+]${WHITE}Iniciando as configurações de rede!${RESET}"
 if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
     if [ -e "${interfaces_config}" ]; then
+
+        echo -e "${BLUE}[+]${WHITE}Fazendo a limpeza das antigas configurações de rede!${RESET}"
+        ip addr flush dev "${main_int}"
+        ip route flush dev "${main_int}"
+
+        for int in "${list_interfaces[@]}";do
+            ip addr flush dev "${int}"
+            ip route flush dev "${int}"
+        done
+
         cat <<CONFIG > "${interfaces_config}"
-    # Loopback
-    auto lo
-    iface lo inet loopback
+# Loopback
+auto lo
+iface lo inet loopback
 
-    # Board
-    allow-hotplug enp3s0
-    iface ${main_int} inet dhcp
+# Rede de Saida
+allow-hotplug ${main_int}
+iface ${main_int} inet dhcp
 
-    # DMZ
-    auto enp8s0
-    iface enp8s0 inet static
-        address 10.1.1.1/24
+# DMZ
+allow-hotplug enp8s0
+iface enp8s0 inet static
+    address 10.1.1.1/24
 
-    # MZ
-    auto enp9s0
-    iface enp9s0 inet static
-        address 10.2.2.1/24
+# MZ
+allow-hotplug enp9s0
+iface enp9s0 inet static
+    address 10.2.2.1/24
+
 CONFIG
     fi
 
@@ -200,13 +216,26 @@ CONFIG
     for int in "${list_interfaces[@]}"; do
         ifup "${int}"
     done
+
+    # Ativando a reinicialização
+    echo -e "${BLUE}[+]${WHITE}Iniciando a reinicialização!${RESET}"
+    case "${os,,}" in
+        "debian"|"ubuntu") systemctl restart networking ;;
+    esac
 fi
 
 # Configuração das regras de firewall
 # Altere conforme for necessário
 
 echo -e "${BLUE}[+]${WHITE}Configurando as regras de firwall!${RESET}"
-if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
+if [[ "${os,,}" == "debian" || "${os,,}" == "ubuntu" ]]; then
+
+    echo -e "${BLUE}[+]${WHITE}Limpando as regras de firwall!${RESET}"
+    read -rp "Autorizar a limpeza das antigas regras de firewall [s/n]" sn
+    if [[ "${sn,,}" == "s" ]]; then
+        iptables -F
+        iptables -t nat -F
+    fi
 
     iptables -t nat -A POSTROUTING -o "${main_int}" -j MASQUERADE
 
@@ -218,13 +247,18 @@ if [[ "${os,,}" == "debian" || "${os,,}" == "debian" ]]; then
         iptables -A FORWARD -i "${main_int}" -o "${int}" -m state --state RELATED,ESTABLISHED -j ACCEPT
     done
 
-    iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.1.1.4:80
-    iptables -A FORWARD -p tcp -d 10.1.1.4 --dport 80 -j ACCEPT
+    iptables -t nat -A PREROUTING -p tcp --dport "${service_port1}" -j DNAT --to-destination "${ip_server1}":80
+    iptables -A FORWARD -p tcp -d "${ip_server1}" --dport "${service_port1}" -j ACCEPT
 
     echo -e "${BLUE}[+]${WHITE}Salvando as regras de firewall!${RESET}"
-    netfilter-persistent save
+    iptables-save /etc/iptables/rules.v4
 
 fi
+
+# Configuração das regras de encaminhamento
+echo -e "${BLUE}[+]${WHITE}Configurando as regras de encaminhamento e proteção DoS!${RESET}"
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
 
 #=======================================
 # Dump final
