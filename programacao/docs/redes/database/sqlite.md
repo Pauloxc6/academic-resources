@@ -249,4 +249,4 @@ sqlite3 "$DB" "VACUUM;"
 
 ## 📜 Licença
 
-[MIT License](../LICENSE) © 2025 Pauloxc6
+[MIT License](../../../../LICENSE) © 2025 Pauloxc6

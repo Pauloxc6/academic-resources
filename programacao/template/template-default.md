@@ -82,6 +82,6 @@ Ferramenta 2 → descrição
 - Outro material útil
 
 ## 📜 Licença
-[MIT License](https://github.com/Pauloxc6/guias-programcao/blob/main/LICENSE) © 2025 Seu Nome
+[MIT License](../../LICENSE) © 2025 Seu Nome
 
 
