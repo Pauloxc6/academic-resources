@@ -1,0 +1,16 @@
+R1 - MASTER
+
+interface vrrp add name=vrrp1 interface=ether1 vrid=49 priority=150 authentication=none preemption-mode=yes interval=1s comment="VRRP - Master"
+ip address add address=192.168.0.254/24 interface=ether1 comment="VRRP Network 1"
+
+interface vrrp add name=vrrp2 interface=ether1 vrid=77 priority=100 interval=1s preemption-mode=yes authentication=none comment="VRRP - Backup"
+ip address add address=192.168.0.253/24 interface=vrrp2 comment="VRRP Network 2"
+
+
+R2 - BACKUP
+
+interface vrrp add name=vrrp1 interface=ether1 vrid=49 priority=100 authentication=none preemption-mode=yes interval=1s comment="VRRP -Backup"
+ip address add address=192.168.0.254/24 interface=ether1 comment="VRRP Network 1"
+
+interface vrrp add name=vrrp2 interface=ether1 vrid=77 priority=150 interval=1s preemption-mode=yes authentication=none comment="VRRP - Masters"
+ip address add address=192.168.0.253/24 interface=vrrp2 comment="VRRP Network 2"

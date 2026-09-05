@@ -1,0 +1,17 @@
+aaa new-model
+!
+!
+aaa authentication login default group tacacs+ local 
+!
+!
+aaa authorization exec default group tacacs+ local
+!
+!
+aaa accounting exec default start-stop group tacacs+
+!
+!
+username backupadmin privilege 15 secret cb=CiscoAdmin
+!
+!
+line vty 0 4
+	login authentication default

@@ -1,0 +1,18 @@
+hosts: routers
+gather_facts: false
+connection: network_cli
+
+tasks:
+  - name: Run cli_command on Cisco IOS and display results
+    block:
+    - name: Run cli_command on Cisco IOS
+      cli_command:
+         command: show ip int br
+      register: result
+
+    - name: Display result to terminal window
+      debug:
+        var: result.stdout_lines
+    when: ansible_network_os == "ios"
+
+

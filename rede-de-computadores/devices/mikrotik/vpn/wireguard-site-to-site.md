@@ -1,0 +1,55 @@
+# Topologia
+
+```
+                                   INTERNET
+                                       │
+                   ┌───────────────────┴───────────────────┐
+                   │                                       │
+             WAN: 192.168.122.2                     WAN: 192.168.122.3
+                   │                                       │
+          ┌─────────────────┐                    ┌─────────────────┐
+          │   MikroTik R1   │◄══════════════════►│   MikroTik R2   │
+          │     Matriz      │   WireGuard Tunnel │      Filial     │
+          │                 │   10.10.10.0/30    │                 │
+          │ WG: 10.10.10.1  │                    │ WG: 10.10.10.2  │
+          └────────┬────────┘                    └────────┬────────┘
+                   │                                      │
+            LAN: 10.1.0.0/16                      LAN: 10.1.2.0/16
+                   │                                      │
+      ┌────────────┴────────────┐            ┌────────────┴────────────┐
+      │        Rede Local       │            │        Rede Local       │
+      │ PCs, Servidores, NAS... │            │ PCs, Servidores, NAS... │
+      └─────────────────────────┘            └─────────────────────────┘
+```
+----
+
+## Mk1
+
+WAN: 192.168.122.2/24
+LAN: 10.1.0.1/16
+VPN: 10.10.10.0/30
+
+```
+interface wireguard add
+
+interface wireguard peer add interface=wg1 public-key="JeGtwogP9fNFmaw7VovwpDLsm0rOtnVbJGQl2opgugY=" endpoint-address=192.168.122.3 allowed-address=10.1.2.0/24,10.10.10.2/30
+
+ip address add address=10.10.10.1/30 comment="Wireguard"
+ip route add dst-address=10.1.2.0/24 gateway=10.10.10.2
+```
+
+## Mk2
+
+WAN: 192.168.122.3/24
+LAN: 10.1.2.1/16
+VPN: 10.10.10.0/30
+
+```
+interface wireguard add
+
+interface wireguard peer add interface=wg1 public-key="htpMAf8FJsEjH8lavCQbK6bTJ4x65X5Up74Zcr8J/nc=" endpoint-address=192.168.122.2 allowed-address=10.1.0.0/24,10.10.10.1/30
+
+ip address add address=10.10.10.2/30 comment="Wireguard"
+ip route add dst-address=10.1.0.0/24 gateway=10.10.10.1
+```
+

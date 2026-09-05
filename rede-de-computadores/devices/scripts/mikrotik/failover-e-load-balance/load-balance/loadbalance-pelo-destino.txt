@@ -1,0 +1,4 @@
+ip firewall mangle add chain=prerouting dst-address-list=WAN-DST action=mark-routing new-routing-mark=Rota-WAN2
+ip firewall mangle add chain=prerouting protocol=tcp dst-port=80,443 action=mark-routing new-routing-mark=WAN-2PORTAS
+
+ip route dst-address=0.0.0.0/0 gateway=ether4-WAN2 distance=2 routing-mark=Rota-WAN2

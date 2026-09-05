@@ -1,0 +1,95 @@
+hostname CR0
+!
+!
+configure terminal
+!
+!
+ip name-server 1.1.1.1
+ip domain-name router-cisco.net
+!
+!
+clock timezone America -3 0
+ntp server pool.ntp.br
+!
+!
+line vty 0 4
+	login local
+	transport input ssh
+!
+!
+crypto key gen rsa
+!
+!
+username admin privilege 15 secret c=CiscoAdmin2024#
+!
+!
+interface  GigabitEthernet0/0
+	description int-wan-00
+	no ip address
+	ip nat outside
+	ip access-group nat-cisco out
+	pppoe enable group global 
+	pppoe-client dial-pool-number 1
+	ip ospf 10 area 0
+	no shutdown
+!
+!
+interface  GigabitEthernet0/1
+	description int-lan-00
+	ip add 10.1.100.254 255.255.255.0
+	ip nat inside
+	ip access-group nat-cisco in
+	ip ospf 10 area 0
+	no shutdown
+!
+!
+interface vlan 1000
+	ip address 172.16.2.254 255.255.255.252
+	description management-int-0
+!
+!
+interface loopback 0
+	ip add 100.10.1.1 255.255.255.255
+!
+!
+interface dialer 1
+	mtu 1492
+	ip address negotiated 
+	encapsulation ppp
+	dialer pool 1
+	ppp authentication chap default
+	ppp chap hostname ppp_user_1
+	ppp chap password ppp=CiscoUser
+!
+!
+ip access-list extended nat-cisco
+ permit ip 10.1.100.0 0.0.0.255 any
+!
+!
+ip nat inside source list nat-cisco interface Dialer 1 overload
+!
+!
+router ospf 10
+	router-id 100.10.1.1
+!
+!
+ip route 0.0.0.0 0.0.0.0 dialer1 1
+!
+!
+logging host 10.1.100.200
+logging trap debugging
+logging trap notifications
+!
+!
+snmp-server host 10.1.100.201 version 2c network-1
+snmp-server community network-1 ro
+snmp-server enable traps cpu
+snmp-server enable traps eigrp
+snmp-server enable traps bgp
+snmp-server enable traps memory
+!
+!
+ip dhcp pool pool1-dhcp
+	network 10.1.100.0 255.255.255.0
+	dns-server 1.1.1.1
+	default-router 10.1.10.254

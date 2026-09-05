@@ -1,0 +1,31 @@
+Router: 192.168.10.1
+TFTP: 192.168.10.10
+
+tftpd32
+
+Manual
+R0#copy running-config tftp: 
+Address or name of remote host []? 192.168.10.10
+Destination filename [R0-confg]? router-R0-config
+
+Automatica
+
+kron policy-list backup-cisco
+cli show run | redirect tftp://192.168.10.10/kron-router-r0-config.cfg
+exit
+kron occurrence backup-cisco-time in 1 recurring
+policy-list backup-cisco
+end
+
+show kron schedule
+
+
+Archive
+
+archive
+log config
+logging enable
+path tftp://192.168.10.10/$h-
+write-memory
+time-period 1
+

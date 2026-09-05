@@ -1,0 +1,19 @@
+ip access-list extended fw-00-filter
+	permit ip 192.168.2.0 0.0.0.255 host 192.168.2.254
+
+	permit icmp 192.168.2.0 0.0.0.255 host 192.168.2.254
+ 
+	permit tcp 192.168.2.0 0.0.0.255 host 192.168.2.254 eq 22
+
+	permit udp 192.168.2.0 0.0.0.255 host 192.168.2.254 eq 161
+	permit udp 192.168.2.0 0.0.0.255 host 192.168.2.254 eq 69
+	permit udp 192.168.2.0 0.0.0.255 host 192.168.2.254 eq 53
+
+	deny tcp 192.168.2.0 0.0.0.255 host 192.168.2.254 eq 21
+	deny tcp 192.168.2.0 0.0.0.255 host 192.168.2.254 eq 23
+
+
+
+interface GigabitEthernet0/0
+	ip access-group fw-00-filter in
+	

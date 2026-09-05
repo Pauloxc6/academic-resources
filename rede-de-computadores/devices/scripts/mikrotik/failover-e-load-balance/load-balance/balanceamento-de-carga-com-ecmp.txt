@@ -1,0 +1,18 @@
+Routes
+
+ip route add dst-address=0.0.0.0/0 gateway=192.168.100.1 routing-mark="to-WAN1"
+ip route add dst-address=0.0.0.0/0 gateway=172.16.0.1 routing-mark="to-WAN2"
+
+
+Mark Connections
+
+/ip firewall mangle add action=mark-connection chain=input in-interface=ether1 new-connection-mark=Con-WAN1 passthrough=yes
+/ip firewall mangle add action=mark-connection chain=input in-interface=ether2 new-connection-mark=Con-WAN2 passthrough=yes
+
+
+Mark Routes
+
+ip firewall mangle add chain=output connection-mark=Con-WAN1 action=mark-routing new-connection-mark=to-WAN1
+ip firewall mangle add chain=output connection-mark=Con-WAN2 action=mark-routing new-connection-mark=to-WAN2
+
+

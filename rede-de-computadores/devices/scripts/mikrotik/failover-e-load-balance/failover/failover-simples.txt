@@ -1,0 +1,6 @@
+/ip route
+add disabled=no distance=1 dst-address=0.0.0.0/0 gateway=ether1-WAN pref-src="" \
+    routing-table=main scope=30 suppress-hw-offload=no target-scope=10
+
+add disabled=no distance=2 dst-address=0.0.0.0/0 gateway=ether2-WAN2 pref-src="" \
+    routing-table=main scope=30 suppress-hw-offload=no target-scope=10

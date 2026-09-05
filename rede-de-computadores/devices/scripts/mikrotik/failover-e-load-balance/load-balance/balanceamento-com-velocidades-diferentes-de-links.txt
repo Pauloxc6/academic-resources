@@ -1,0 +1,42 @@
+10 20
+
+10 + 20 = 30 (a soma dos links)
+30 / 10 = 3 (filas)
+30 / 3 = 10 (cada fila tera 10 mbps)
+
+Evitando loop na rede
+
+ip firewall mangle add chain=prerouting action=accept src-address=10.1.1.0/24 dst-address=10.1.1.0/24 comment="Evita loop na rede local"
+ip firewall mangle add chain=prerouting action=accept src-address=10.1.1.0/24 dst-address=192.168.100.0/24 comment="Evita loop na rede wan 1"
+ip firewall mangle add chain=prerouting action=accept src-address=10.1.1.0/24 dst-address=172.16.0.0/24 comment="Evita loop na rede wan 2"
+
+
+Mark Connections
+
+ip firewall mangle add chain=prerouting in-interface=ether1 connection-mark=no-mark action=mark-connection new-connection-mark=Con-WAN1
+ip firewall mangle add chain=prerouting in-interface=ether2 connection-mark=no-mark action=mark-connection new-connection-mark=Con-WAN2
+
+
+FILA/GRUPOS
+
+ip firewall mangle add chain=prerouting dst-address-type=!local in-interface=ether4 connection-mark=no-mark per-connection-classifier=both-addresses:3/1 action=mark-connection new-connection-mark=Con-WAN1
+ip firewall mangle add chain=prerouting dst-address-type=!local in-interface=ether4 connection-mark=no-mark per-connection-classifier=both-addresses:3/0 action=mark-connection new-connection-mark=Con-WAN1
+ip firewall mangle add chain=prerouting dst-address-type=!local in-interface=ether4 connection-mark=no-mark per-connection-classifier=both-addresses:3/2 action=mark-connection new-connection-mark=Con-WAN2
+
+
+Mark Rotas
+
+ip firewall mangle add chain=prerouting in-interface=ether4 connection-mark=Con-WAN1 action=mark-routing new-routing-mark=Rota-WAN1
+ip firewall mangle add chain=prerouting in-interface=ether4 connection-mark=Con-WAN2 action=mark-routing new-routing-mark=Rota-WAN2
+
+ip firewall mangle add chain=output connection-mark=Con-WAN1 action=mark-routing new-routing-mark=Rota-WAN1
+ip firewall mangle add chain=output connection-mark=Con-WAN2 action=mark-routing new-routing-mark=Rota-WAN2
+
+
+Rotas
+ip route add dst-address=0.0.0.0/24 gateway=ether1 distance=1
+ip route add dst-address=0.0.0.0/24 gateway=ether2 distance=2
+ip route add dst-address=0.0.0.0/24 gateway=ether1 distance=1 routing-mark=Rota-WAN1
+ip route add dst-address=0.0.0.0/24 gateway=ether2 distance=1 routing-mark=Rota-WAN2
+
+

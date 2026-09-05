@@ -1,0 +1,9 @@
+routing bgp template add name=default-template disabled=no as=301 multihop=yes router-id=110.110.2.1 \
+	routing-table=main vrf=main
+
+routing bgp connection 
+add name=mk1 templates=default-template remote.address=192.168.100.1 remote.as=200 local.role=ebgp \
+	input.filter=mk1-in output.filter-chain=mk1-out
+
+add name=mk3 templates=default-template remote.address=192.168.100.7 remote.as=201 local.role=ebgp \
+	input.filter=mk3-in output.filter-chain=mk3-out

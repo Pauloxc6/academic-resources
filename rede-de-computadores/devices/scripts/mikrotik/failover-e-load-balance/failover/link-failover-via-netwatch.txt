@@ -1,0 +1,9 @@
+/ip route add comment="LINK 1" disabled=yes distance=1 dst-address=0.0.0.0/0 gateway=192.168.100.1 \
+	pref-src="" routing-table=main scope=30 suppress-hw-offload=no target-scope=10
+
+/ip route add comment="LINK 2" disabled=no distance=2 dst-address=0.0.0.0/0 gateway=172.16.0.1 \
+	pref-src="" routing-table=main scope=30 suppress-hw-offload=no target-scope=10
+
+/tool netwatch add disabled=no down-script="/ip route disable [find comment=\"LINK 1\"]" host=1.1.1.1 \
+	http-codes="" interval=10s test-script="" timeout=50ms type=simple \
+	up-script="ip route enable [find comment=\"LINK 1\"]"

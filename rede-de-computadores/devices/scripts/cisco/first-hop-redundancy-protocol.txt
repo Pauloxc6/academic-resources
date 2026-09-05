@@ -1,0 +1,73 @@
+                /----------------[ WEB ]
+    ----------(RB)--------
+   /                      \
+  /                        \
+ /                          \
+[  SW 1  ]----------[  SW 2  ]
+ \                          /
+  \                        / 
+   \-------[  SW 0  ]-----/
+           |     |
+           []    []
+          ----  ----
+First HOP          
+
+SW1: 192.168.10.1
+Sw2: 192.168.10.2
+
+
+HSRP (cisco): hot stand redundacy protocol (faz dois switchs parecerem um so, utilizando um ip virtual | 192.168.10.3)
+
+VIP (Virtaul IP): 192.168.10.3
+VMAC = 0000.0c07.acxx
+
+Active    192.168.10.23   Standby
+[ Sw1 ]-------------------[ Sw2 ] 
+
+int f0/0                    
+	standby 1 ip 100.1.1.1 
+	standby 1 priority 110
+	standby 1 preempt
+
+int f0/0
+	standby 1 ip 100.1.1.1
+	standby 1 preempt
+
+-----------------------------------------------------------------------------------------------
+VRRP (open): Virtual Router Redundancy Protocol
+
+VMAC: 0000.5e00.01xx
+
+Master    192.168.10.23   Slave
+[ Sw1 ]-------------------[ Sw2 ]
+
+int f0/0                    
+	vrrp 1 ip 100.1.1.1
+	vrrp 1 version 2
+	vrrp 1 priority 110
+	vrrp 1 preempt
+
+int f0/0
+	vrrp 1 ip 100.1.1.1
+	vrrp 1 version 2
+	vrrp 1 preempt
+	
+
+-----------------------------------------------------------------------------------------------
+GLBP (cisco): Gateway Load Balancing Protocol (os dois switchs sao actives)
+
+VMAC: 0007.b400.xxyy
+
+
+interface fastethernet 0/0
+ glbp 10 ip 10.21.8.10
+ glbp 10 load-balancing host-dependent
+ glbp 10 preempt
+ glbp 10 priority 254
+
+interface fastethernet 0/0
+ glbp 10 ip 10.21.8.11
+ glbp 10 load-balancing host-dependent
+ glbp 10 preempt
+ glbp 10 priority 254
+

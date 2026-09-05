@@ -1,0 +1,31 @@
+Evita loops na rede
+
+/ip firewall mangle add action=accept chain=prerouting comment="Invata loop na rede local" dst-address=10.1.1.0/24 src-address=10.1.1.0/24
+/ip firewall mangle add action=accept chain=prerouting comment="Invata loop de rede wan" dst-address=192.168.100.0/24 src-address=10.1.1.0/24
+/ip firewall mangle add action=accept chain=prerouting comment="Invata loop de rede wan 2" dst-address=172.16.0.0/24 src-address=10.1.1.0/24
+
+
+Mark Connections
+
+/ip firewall mangle add action=mark-connection chain=prerouting connection-mark=no-mark in-interface=ether1 new-connection-mark=WAN-con passthrough=yes
+/ip firewall mangle add action=mark-connection chain=prerouting connection-mark=no-mark in-interface=ether2 new-connection-mark=WAN-con passthrough=yes
+
+/ip firewall mangle add action=mark-connection chain=prerouting connection-mark=no-mark in-interface=ether4 new-connection-mark=WAN-con passthrough=yes per-connection-classifier=both-addresses:2/0 src-address-type=""
+/ip firewall mangle add action=mark-connection chain=prerouting connection-mark=no-mark dst-address-type=local in-interface=ether4 new-connection-mark=WAN2-con passthrough=yes per-connection-classifier=both-addresses:2/1 src-address-type=""
+
+
+
+Mark Rotas
+/ip firewall mangle add action=mark-routing chain=prerouting connection-mark=WAN-con in-interface=ether4 new-routing-mark=rota-wan passthrough=yes
+/ip firewall mangle add action=mark-routing chain=output connection-mark=WAN-con new-routing-mark=rota-wan passthrough=yes
+/ip firewall mangle add action=mark-routing chain=output connection-mark=WAN2-con new-routing-mark=rota-wan passthrough=yes
+/ip firewall mangle add action=mark-routing chain=prerouting connection-mark=WAN2-con in-interface=ether4 new-routing-mark=rota-wan passthrough=yes
+
+
+
+/ip route
+
+add distance=1 dst-address=0.0.0.0/0 gateway=ether1
+add distance=2 dst-address=0.0.0.0/0 gateway=ether2
+add distance=1 dst-address=0.0.0.0/0 gateway=ether1 routing-table=rota-wan
+add distance=2 dst-address=0.0.0.0/0 gateway=ether2 routing-table=rota-wan

@@ -1,0 +1,9 @@
+ip route add comment=monitor dst-address=8.8.8.8 gateway=192.168.100.1
+
+system script add name=linkdown source="/ip route set [/ip route find where comment=LINK-1] distance=3" \
+	dont-require-permissions=yes
+
+system script add name=linkup source="/ip route set [/ip route find where comment=LINK-1] distance=1" \
+	dont-require-permissions=yes
+
+tool netwatch add host=8.8.8.8 down-script=linkdown up-script=linkup interval=5s

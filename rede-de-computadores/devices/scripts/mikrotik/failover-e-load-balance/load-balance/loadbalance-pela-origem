@@ -1,0 +1,4 @@
+ip firewall mangle add chain=prerouting src-address-list=link-internet-1 action=mark-routing new-routing-mark=Rota-WAN1
+ip firewall mangle add chain=prerouting src-address-list=link-internet-2 action=mark-routing new-routing-mark=Rota-WAN2
+
+ip route dst-address=0.0.0.0/0 gateway=ether4-WAN2 distance=2 routing-mark=Rota-WAN2

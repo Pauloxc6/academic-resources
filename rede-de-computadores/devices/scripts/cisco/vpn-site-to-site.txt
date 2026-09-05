@@ -1,0 +1,97 @@
+NY_R1
+
+host NY_R1
+int f0/1
+	ip add 192.168.10.1 255.255.255.0
+	no shut
+
+
+int f0/0
+	ip add 10.1.1.1 255.255.255.0
+	no shut
+
+
+
+
+crypto isakmp policy 1
+	encryption 3des 
+	hash md5
+	authentication pre-share 
+	group 2
+	lifetime 86400
+
+
+crypto isakmp key cisco address 10.1.1.2
+
+
+crypto ipsec transform-set TS esp-3des esp-md5-hmac 
+
+
+crypto map CMAP 10 ipsec-isakmp 
+	set peer 10.1.1.2
+	transform-set TS
+	match address VPN-TRAFFIC
+
+
+ip access-list ext VPN-TRAFFIC 
+	permit ip 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255
+
+
+int f0/0
+	crypto map CMAP
+
+
+ip route 0.0.0.0 0.0.0.0 10.1.1.2
+
+
+---------------------------------------------------------------------------------------
+LA_R1
+
+host LA_R1
+int f0/1
+	ip add 192.168.20.1 255.255.255.0
+	no shut
+
+
+int f0/0
+	ip add 10.1.1.2 255.255.255.0
+	no shut
+
+
+
+crypto isakmp policy 1
+	encryption 3des 
+	hash md5
+	authentication pre-share 
+	group 2
+	lifetime 86400
+
+
+crypto isakmp key cisco address 10.1.1.1
+
+
+crypto ipsec transform-set TS esp-3des esp-md5-hmac 
+
+
+crypto map CMAP 10 ipsec-isakmp 
+	set peer 10.1.1.1
+	set transform-set TS
+	match address VPN-TRAFFIC
+
+
+ip access-list ext VPN-TRAFFIC 
+	permit ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+
+
+int f0/0
+	crypto map CMAP
+
+
+ip route 0.0.0.0 0.0.0.0 10.1.1.1
+
+
+
+
+show crypto sessions
+
+
